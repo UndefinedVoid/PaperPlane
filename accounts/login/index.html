@@ -1,0 +1,61 @@
+<html><meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;  user-scalable=0;" name="viewport">
+<title>Create New ChatRoom</title>
+<script src='jquery-1.9.1.min.js'></script>
+<script>
+ var connection = new WebSocket('ws://localhost:4100');
+//var connection = new window.WebSocket('ws://192.168.43.203:4000');
+
+    connection.onopen = function () {
+       // TODO 
+        
+    };
+
+    connection.onerror = function (error) {
+       alert('Oops...Something Went Wrong...Try Again');
+        
+    };
+function CreateNewRoom() {
+ var UserName = document.getElementById('chatname').value;
+ var PassWord = document.getElementById('purpose').value;
+ 
+ var inValid = /\s/;
+
+var k = inValid.test(ChatName);
+if (k == true) {
+   alert("Don't Keep Spaces in Your ChatRoom Name...");
+  var ChatName = ('');
+}
+else { connection.send(UserName+','+PassWord);
+}
+ }
+connection.onmessage = function () {
+  if (json.type == 'already') { alert('UserName Doesn\'t Exists'); 
+   window.location.href=('index.html');
+}
+ else  { alert('Logged In Account'); 
+   window.location.href=('http://localhost:1337/account/'+UserName);}
+};
+
+
+
+</script>
+<link rel="stylesheet" href="style.css">
+<body>
+<center><pre><br><h2>PaperPlane</h2><h4>Login</h4><br></pre></center> 
+<form>
+<br><br><center>
+<input type="text" placeholder="Enter UserName..." id='chatname'><br>
+<br><input type="text" placeholder="Enter PassWord" id='purpose'><br>
+<br><br><br><br>
+<button type="submit" onclick='CreateNewRoom();'>Submit</button></center><br><br>
+
+</form><br><center><a href='http://localhost:1337/accounts' style='color:white;font-size:14px;'>Don't Have An Account? SignUp Here</a></center><br><br>
+<footer>
+<br>
+<center>
+<b>&copy; Divy Srivastava 2018 </b>
+</center>
+<br>
+</footer>
+</body>
+</html>

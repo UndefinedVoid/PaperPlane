@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;  user-scalable=0;" name="viewport">
+<link rel="icon" href="icon.png">
+<meta charset="utf-8">
+<link rel="stylesheet" href="style.css">
+<title>Student.io --- ChatRoom </title>
+
+<style>
+    * {
+
+        font-size: 14px;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    p {
+        line-height: 18px;
+    }
+
+    div {
+        width: 800px;
+    }
+
+    #content {
+        padding: 5px;
+        background: white;
+        border-radius: 5px;
+        overflow-y: scroll;
+        border: 1px solid #CCC;
+        margin-top: 10px;
+        height: 160px;
+        margin: auto;
+    }
+
+    #input {
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+        padding: 5px;
+        width: 800px;
+    }
+
+    #status {
+        width: 100px;
+        display: block;
+        margin-top: 15px;
+        color: white;
+    }
+
+    footer {
+        display: block;
+
+
+    }
+
+    img {
+        width: 110px;
+    }
+
+    #divyChat {
+        color: deepskyblue;
+        background-color: white;
+        border-radius: 5px;
+        border: none;
+        height: 30px;
+        width: 90px;
+        margin-top: 20px;
+    }
+
+    #divyChat:disabled {
+        display: none;
+        border-radius: 5px;
+        border: none;
+        height: 30px;
+        width: 90px;
+        margin-top: 20px;
+    }
+
+    #divyChat2 {
+        display: none;
+        background-color: white;
+        color: deepskyblue;
+        margin-top: 20px;
+    }
+
+    /* @media only screen and (max-device-width: 480px), only screen and (-webkit-min-device-pixel-ratio: 2) , screen and (-webkit-device-pixel-ratio:1.5){
+  #content {margin-top:100px;width:900px;height:900px;font-size:30px;} 
+  #status {font-size:40px;width:800px;margin-top:40px;}	
+ p , span{font-size:25px;line-height:30px;}
+	#input{font-size:40px;width:800px;margin-top:20px;}
+#d {float:center;font-size:40px;padding-left:0px;}
+footer {float:center;padding-right:20px;} 
+
+
+
+} */
+
+    @media only screen and (max-device-width: 480px),
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    screen and (-webkit-device-pixel-ratio:1.5) {
+        div {
+            width: 330px;
+        }
+        #input {
+            width: 320px;
+        }
+    }
+</style>
+</head>
+<img src='icon.png'>
+<center>
+    <h2 style='color:white;font-size:30px;margin-bottom:30px;'>PaperPlane</h2>
+</center>
+
+<body>
+    <br>
+    <div id="content"></div>
+    <center>
+        <div>
+            <span id="status">Starting..</span>
+    </center>
+    <center>
+        <input type="text" id="input" disabled="disabled" placeholder="Enter Your Message.." />
+    </center>
+    <center>
+        <!-- <button type="submit" style="border-radius:10px;border:none;background-color:white;color:deepskyblue;margin:20px;" onclick='OpenForm();'>
+        I Want To Send A File... </button> -->
+    </center>
+    <center>
+        <img src='icon180.png' style='float:right;'>
+        <iframe src='http://localhost:1337/uploadfile' id='display' style='display:none;border:none;'>
+
+        </iframe>
+    </center>
+    </div>
+    <center>
+        <select id="divyChat">
+            <option>Divy</option>
+            <option>Dhairy</option>
+            <option>Dhruva</option>
+        </select>
+    </center>
+
+    <center>
+        <span id='divyChat2'></span>
+    </center>
+    <center>
+        <div>
+            <div id='views' style="height:200px;"></div>
+            <footer>
+                <b style="background-color:white;color:deepskyblue;border-radius:5px;" id="d">
+                    <br>&copy; Divy Srivastava 2018
+                    <br>
+                    <br>
+                </b>
+            </footer>
+        </div>
+    </center>
+
+    <script>
+        function OpenForm() {
+            document.getElementById('display').style.display = ('inherit');
+        }
+
+    </script>
+
+    <script src="./jquery-1.9.1.min.js"></script>
+    <script>$(function () {
+            "use strict";
+
+            // for better performance - to avoid searching in DOM
+            var content = $('#content');
+            var input = $('#input');
+            var status = $('#status');
+
+            // my color assigned by the server
+            var myColor = false;
+            // my name sent to the server
+            var myName = false;
+
+            // if user is running mozilla then use it's built-in WebSocket
+            window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+            // if browser doesn't support WebSocket, just show some notification and exit
+            if (!window.WebSocket) {
+                content.html($('<p>', {
+                    text: 'Sorry, but your browser doesn\'t '
+                        + 'support WebSockets.'
+                }));
+                input.hide();
+                $('span').hide();
+                return;
+            }
+
+            // open connection
+            //var connection = new window.WebSocket('ws://localhost:1337');
+             var connection = new window.WebSocket('ws://192.168.43.203:1337');
+
+            connection.onopen = function () {
+
+                input.removeAttr('disabled');
+                status.text('Choose name:');
+
+            };
+
+            connection.onerror = function (error) {
+                // just in there were some problems with conenction...
+                content.html($('<p>', {
+                    text: 'Sorry, but there\'s some problem with your '
+                        + 'connection or the server is down.'
+                }));
+
+            };
+            connection.addEventListener('canplaythrough', function() {
+            connection.send('his')
+        }, false);
+            // most important part - incoming messages
+            connection.onmessage = function (message) {
+                // try to parse JSON message. Because we know that the server always returns
+                // JSON this should work without any problem but we should make sure that
+                // the massage is not chunked or otherwise damaged.
+                try {
+                    var json = JSON.parse(message.data);
+                } catch (e) {
+                    console.log('This doesn\'t look like a valid JSON: ', message.data);
+                    return;
+                }
+
+                // NOTE: if you're not sure about the JSON structure
+                // check the server source code above
+                if (json.type === 'color') { // first response from the server with user's color
+                    myColor = json.data;
+                    status.text(myName + ': ').css('color', myColor);
+                    input.removeAttr('disabled').focus();
+                    // from now user can start sending messages
+                } else if (json.type === 'history') { // entire message history
+                    // insert every single message to the chat window
+                    for (var i = 0; i < json.data.length; i++) {
+
+                        if (json.data[i].author == 'Dhairy') {
+                            addMessage(json.data[i].author, json.data[i].text,
+                                json.data[i].color, new Date(json.data[i].time));
+                        }
+
+                    }
+                } else if (json.type === 'message') { // it's a single message
+                    input.removeAttr('disabled'); // let the user write another message
+                    if (json.data.author == 'Dhairy' || json.data.author == 'Divy') {
+                        addMessage(json.data.author, json.data.text,
+                            json.data.color, new Date(json.data.time));
+                    }
+                } else if (json.type === 'file') { // first response from the server with user's color
+                    myfile = json.data;
+
+
+                    input.removeAttr('disabled').focus();
+                    console.log('Recieved FilePath');
+                    content.prepend('<p><span style="color:' + color + '">' + author + '</span> @ ' +
+                        + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
+                        + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
+                        + ': <a href="' + myfile + '">' + myfile + '</a></p>');
+
+
+                }
+                else if (myName === 'Server') { // it's a single message
+
+                    alert("You Can't Use That Username.");
+                    window.location.href = ('index.html');
+                }
+                else if (myName === 'server') { // it's a single message
+
+                    alert("You Can't Use That Username.");
+                    window.location.href = ('index.html');
+                }
+                else if (myName === 'Divy') {
+
+                    var DivyPass = prompt('Enter The PassWord...');
+                    if (DivyPass === 'Pikachu@123') {
+                        alert('Welcome Divy');
+                    }
+                    else {
+                        alert('Forgot PassWord!');
+                        window.location.href = ('frontEnd.html');
+                    }
+                }
+                else if (myName === 'divy') {
+
+                    var DivyPass = prompt('Enter The PassWord...');
+                    if (DivyPass === 'Pikachu@123') {
+                        alert('Welcome Divy');
+                    }
+                    else {
+                        alert('Forgot PassWord!');
+                        window.location.href = ('frontEnd.html');
+                    }
+                }
+                else if (myName === 'DiVy') {
+
+                    var DivyPass = prompt('Enter The PassWord...');
+                    if (DivyPass === 'Pikachu@123') {
+                        alert('Welcome Divy');
+                    }
+                    else {
+                        alert('Forgot PassWord!');
+                        window.location.href = ('frontEnd.html');
+                    }
+                }
+                else {
+                    console.log('Hmm..., I\'ve never seen JSON like this: ', json);
+                }
+            };
+
+            /**
+             * Send mesage when user presses Enter key
+             */
+            input.keydown(function (e) {
+                if (e.keyCode === 13) {
+                    var receiver = $('#divyChat').val();
+                    var msg = $(this).val();
+                    if (!msg) {
+                        return;
+                    }
+                    document.getElementById("divyChat2").style.display = 'inherit';
+                    $('#divyChat2').text('You Are Chatting With ' + receiver);
+                    // send the message as an ordinary text
+                    connection.send(JSON.stringify({ Receiver: receiver, Message: msg }));
+                    $(this).val('');
+                    // disable the input field to make the user wait until server
+                    // sends back response
+                    input.attr('disabled', 'disabled');
+
+                    $('#divyChat').attr('disabled', 'disabled');
+
+                    // we know that the first message sent from a user is their name
+                    if (myName === false) {
+
+                        myName = msg;
+
+                    }
+                }
+            });
+            /* function SendFile() {
+               var files = document.getElementById('file').data;
+             for (var x=0; x < e.dataTransfer.files.length; x++) {
+           
+               // instantiate a new FileReader object
+               var fr = new FileReader();
+           
+               // loading files from the file system is an asynchronous
+               // operation, run this function when the loading process
+               // is complete
+               fr.addEventListener("loadend", function() {
+                 // send the file over web sockets
+                connection.send(fr.result);
+               });
+           
+               // load the file into an array buffer
+               fr.readAsArrayBuffer(file);
+             }
+           } */
+            /**
+             * This method is optional. If the server wasn't able to respond to the
+             * in 4 seconds then show some error message to notify the user that
+             * something is wrong.
+             */
+            setInterval(function () {
+                if (connection.readyState !== 1) {
+                    status.text('Oops!');
+                    input.attr('disabled', 'disabled').val('Unable to comminucate '
+                        + 'with the WebSocket server.');
+                }
+            }, 4000);
+
+            /**
+             * Add message to the chat window
+             */
+            function addMessage(author, message, color, dt) {
+                if (author == 'Server') {
+                    content.prepend('<p style="border-radius:5px;background-color:red;color:white;"><span style="color:white;">' + author + '</span> @ ' +
+                        + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
+                        + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
+                        + ': ' + message + '</p>');
+                }
+
+
+                else {
+                    content.prepend('<p><span style="color:' + color + '">' + author + '</span> @ ' +
+                        + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
+                        + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
+                        + ': ' + message + '</p>');
+                }
+
+            }
+
+        });</script>
+</body>
+
+</html>

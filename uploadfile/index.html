@@ -1,0 +1,28 @@
+<script> var connection = new window.WebSocket('ws://localhost:1337');
+    // var connection = new window.WebSocket('ws://192.168.43.203:1337');
+
+    connection.onopen = function () {
+        // first we want users to enter their names
+        
+    };
+
+    connection.onerror = function (error) {
+        // just in there were some problems with conenction...
+       
+    };
+   
+    connection.onmessage = function (message) {
+         
+        try {
+            var json = JSON.parse(message.data);
+        } catch (e) {
+            console.log('This doesn\'t look like a valid JSON: ', message.data);
+            return;
+       }
+};
+</script>
+
+<form action="fileupload" method="post" enctype="multipart/form-data">
+<input type="file" name="filetoupload"><br>
+<input type="submit">
+</form>
